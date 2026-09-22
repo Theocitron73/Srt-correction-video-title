@@ -1,0 +1,6 @@
+{
+  "name": "Correcteur SRT & Titres Vidéo",
+  "description": "Correction orthographique de fichiers SRT, génération d'idées de titres accrocheurs et descriptions Facebook optimisées SEO.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
