@@ -98,6 +98,9 @@ export const FacebookSeoView: React.FC<FacebookSeoViewProps> = ({
     if (lower.includes("curiosité") || lower.includes("intrigue")) {
       return "bg-purple-100 text-purple-800 border-purple-200";
     }
+    if (lower.includes("humour") || lower.includes("humoristique") || lower.includes("dérision") || lower.includes("second degré")) {
+      return "bg-fuchsia-100 text-fuchsia-800 border-fuchsia-200";
+    }
     if (lower.includes("engageant") || lower.includes("communautaire") || lower.includes("débat")) {
       return "bg-blue-100 text-blue-800 border-blue-200";
     }

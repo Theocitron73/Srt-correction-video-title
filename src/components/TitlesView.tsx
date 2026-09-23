@@ -58,6 +58,9 @@ export const TitlesView: React.FC<TitlesViewProps> = ({
     if (lower.includes("court") || lower.includes("punchline") || lower.includes("réseaux")) {
       return "bg-cyan-100 text-cyan-800 border-cyan-200";
     }
+    if (lower.includes("humour") || lower.includes("humoristique") || lower.includes("dérision") || lower.includes("second degré")) {
+      return "bg-fuchsia-100 text-fuchsia-800 border-fuchsia-200";
+    }
     return "bg-indigo-100 text-indigo-800 border-indigo-200";
   };
 
