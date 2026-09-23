@@ -15,6 +15,7 @@ import {
   Lightbulb
 } from "lucide-react";
 import { FacebookDescriptionIdea } from "../types";
+import { copyToClipboard } from "../utils/clipboard";
 
 interface FacebookSeoViewProps {
   facebookDescription: string;
@@ -63,15 +64,15 @@ export const FacebookSeoView: React.FC<FacebookSeoViewProps> = ({
     }
   };
 
-  const handleCopyCurrent = () => {
-    navigator.clipboard.writeText(description);
+  const handleCopyCurrent = async () => {
+    await copyToClipboard(description);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleCopyCard = (text: string, index: number, e: React.MouseEvent) => {
+  const handleCopyCard = async (text: string, index: number, e: React.MouseEvent) => {
     e.stopPropagation();
-    navigator.clipboard.writeText(text);
+    await copyToClipboard(text);
     setCopiedCardIndex(index);
     setTimeout(() => setCopiedCardIndex(null), 1800);
   };

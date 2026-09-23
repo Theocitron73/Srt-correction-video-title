@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { SrtCue } from "../types";
 import { downloadSrtFile } from "../utils/srtParser";
+import { copyToClipboard } from "../utils/clipboard";
 
 interface SubtitlesViewProps {
   originalCues: SrtCue[];
@@ -29,8 +30,8 @@ export const SubtitlesView: React.FC<SubtitlesViewProps> = ({
   const [viewMode, setViewMode] = useState<"side-by-side" | "raw" | "clean-list">("side-by-side");
   const [filterChangedOnly, setFilterChangedOnly] = useState(false);
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(rawCorrectedSrt);
+  const handleCopy = async () => {
+    await copyToClipboard(rawCorrectedSrt);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };

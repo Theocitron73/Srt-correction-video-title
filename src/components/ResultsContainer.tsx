@@ -14,6 +14,7 @@ import { TitlesView } from "./TitlesView";
 import { FacebookSeoView } from "./FacebookSeoView";
 import { CorrectionsList } from "./CorrectionsList";
 import { downloadSrtFile } from "../utils/srtParser";
+import { copyToClipboard } from "../utils/clipboard";
 
 interface ResultsContainerProps {
   originalCues: SrtCue[];
@@ -48,7 +49,7 @@ export const ResultsContainer: React.FC<ResultsContainerProps> = ({
     downloadSrtFile(result.correctedSrt, `${baseName}_propre.srt`);
   };
 
-  const handleCopyFullBundle = () => {
+  const handleCopyFullBundle = async () => {
     let bundleText = `=== SOUS-TITRES SRT CORRIGÉS ===\n${result.correctedSrt}\n\n` +
       `=== IDÉES DE TITRES ACCROCHEURS (${result.titles.length} TONS) ===\n` +
       result.titles.map((t, i) => `${i + 1}. [${t.hookType}] ${t.title}`).join("\n") +
@@ -62,7 +63,7 @@ export const ResultsContainer: React.FC<ResultsContainerProps> = ({
       bundleText += result.facebookDescription;
     }
 
-    navigator.clipboard.writeText(bundleText);
+    await copyToClipboard(bundleText);
     setCopiedAll(true);
     setTimeout(() => setCopiedAll(false), 2000);
   };

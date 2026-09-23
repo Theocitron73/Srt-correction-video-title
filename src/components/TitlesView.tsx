@@ -9,6 +9,7 @@ import {
   Dices
 } from "lucide-react";
 import { TitleIdea } from "../types";
+import { copyToClipboard } from "../utils/clipboard";
 
 interface TitlesViewProps {
   titles: TitleIdea[];
@@ -28,15 +29,15 @@ export const TitlesView: React.FC<TitlesViewProps> = ({
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [allCopied, setAllCopied] = useState(false);
 
-  const handleCopyTitle = (title: string, index: number) => {
-    navigator.clipboard.writeText(title);
+  const handleCopyTitle = async (title: string, index: number) => {
+    await copyToClipboard(title);
     setCopiedIndex(index);
     setTimeout(() => setCopiedIndex(null), 1800);
   };
 
-  const handleCopyAll = () => {
+  const handleCopyAll = async () => {
     const text = titles.map((t, i) => `${i + 1}. [${t.hookType}] ${t.title}`).join("\n\n");
-    navigator.clipboard.writeText(text);
+    await copyToClipboard(text);
     setAllCopied(true);
     setTimeout(() => setAllCopied(false), 2000);
   };
