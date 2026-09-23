@@ -113,6 +113,71 @@ export default function App() {
     }
   };
 
+  const [isRerollingTitles, setIsRerollingTitles] = useState(false);
+  const [isRerollingDescriptions, setIsRerollingDescriptions] = useState(false);
+
+  const handleRerollTitles = async () => {
+    if (!result) return;
+    setIsRerollingTitles(true);
+    try {
+      const response = await fetch("/api/reroll-titles", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          srtContent: result.correctedSrt || rawSrt,
+          summary: result.summary,
+          keyTopics: result.keyTopics,
+          existingTitles: result.titles.map((t) => t.title),
+        }),
+      });
+      const data = await response.json();
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || "Impossible de régénérer les titres.");
+      }
+      setResult((prev) => (prev ? { ...prev, titles: data.titles } : prev));
+    } catch (err: any) {
+      console.error(err);
+      setErrorMessage(err.message || "Erreur lors du reroll des titres.");
+    } finally {
+      setIsRerollingTitles(false);
+    }
+  };
+
+  const handleRerollDescriptions = async () => {
+    if (!result) return;
+    setIsRerollingDescriptions(true);
+    try {
+      const response = await fetch("/api/reroll-descriptions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          srtContent: result.correctedSrt || rawSrt,
+          summary: result.summary,
+          keyTopics: result.keyTopics,
+          existingDescriptions: result.facebookDescriptions?.map((d) => d.text) || [result.facebookDescription],
+        }),
+      });
+      const data = await response.json();
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || "Impossible de régénérer les descriptions.");
+      }
+      setResult((prev) =>
+        prev
+          ? {
+              ...prev,
+              facebookDescriptions: data.facebookDescriptions,
+              facebookDescription: data.facebookDescriptions[0]?.text || prev.facebookDescription,
+            }
+          : prev
+      );
+    } catch (err: any) {
+      console.error(err);
+      setErrorMessage(err.message || "Erreur lors du reroll des descriptions.");
+    } finally {
+      setIsRerollingDescriptions(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col selection:bg-indigo-500 selection:text-white">
       <Header />
@@ -191,6 +256,10 @@ export default function App() {
               result={result}
               stats={stats}
               fileName={fileName}
+              onRerollTitles={handleRerollTitles}
+              isRerollingTitles={isRerollingTitles}
+              onRerollDescriptions={handleRerollDescriptions}
+              isRerollingDescriptions={isRerollingDescriptions}
             />
           </section>
         )}

@@ -21,6 +21,10 @@ interface ResultsContainerProps {
   result: SrtProcessResult;
   stats: SrtMetaStats;
   fileName: string;
+  onRerollTitles?: () => void;
+  isRerollingTitles?: boolean;
+  onRerollDescriptions?: () => void;
+  isRerollingDescriptions?: boolean;
 }
 
 export const ResultsContainer: React.FC<ResultsContainerProps> = ({
@@ -29,6 +33,10 @@ export const ResultsContainer: React.FC<ResultsContainerProps> = ({
   result,
   stats,
   fileName,
+  onRerollTitles,
+  isRerollingTitles = false,
+  onRerollDescriptions,
+  isRerollingDescriptions = false,
 }) => {
   const [activeTab, setActiveTab] = useState<"subtitles" | "titles" | "facebook" | "corrections">("subtitles");
   const [copiedAll, setCopiedAll] = useState(false);
@@ -41,10 +49,18 @@ export const ResultsContainer: React.FC<ResultsContainerProps> = ({
   };
 
   const handleCopyFullBundle = () => {
-    const bundleText = `=== SOUS-TITRES SRT CORRIGÉS ===\n${result.correctedSrt}\n\n` +
-      `=== IDÉES DE TITRES ACCROCHEURS ===\n` +
+    let bundleText = `=== SOUS-TITRES SRT CORRIGÉS ===\n${result.correctedSrt}\n\n` +
+      `=== IDÉES DE TITRES ACCROCHEURS (${result.titles.length} TONS) ===\n` +
       result.titles.map((t, i) => `${i + 1}. [${t.hookType}] ${t.title}`).join("\n") +
-      `\n\n=== DESCRIPTION FACEBOOK SEO ===\n${result.facebookDescription}\n`;
+      `\n\n=== DESCRIPTIONS FACEBOOK SEO ===\n`;
+
+    if (result.facebookDescriptions && result.facebookDescriptions.length > 0) {
+      bundleText += result.facebookDescriptions
+        .map((d, i) => `--- Ton ${i + 1} : ${d.tone} ---\n${d.text}`)
+        .join("\n\n");
+    } else {
+      bundleText += result.facebookDescription;
+    }
 
     navigator.clipboard.writeText(bundleText);
     setCopiedAll(true);
@@ -164,14 +180,19 @@ export const ResultsContainer: React.FC<ResultsContainerProps> = ({
             titles={result.titles}
             videoSummary={result.summary}
             keyTopics={result.keyTopics}
+            onReroll={onRerollTitles}
+            isRerolling={isRerollingTitles}
           />
         )}
 
         {activeTab === "facebook" && (
           <FacebookSeoView
             facebookDescription={result.facebookDescription}
+            facebookDescriptions={result.facebookDescriptions}
             selectedTitle={selectedTitle}
             durationFormatted={stats.durationFormatted}
+            onReroll={onRerollDescriptions}
+            isRerolling={isRerollingDescriptions}
           />
         )}
 

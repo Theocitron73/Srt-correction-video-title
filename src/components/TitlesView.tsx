@@ -5,8 +5,8 @@ import {
   Check, 
   Sparkles, 
   Lightbulb, 
-  Share2, 
-  Layers
+  RefreshCw, 
+  Dices
 } from "lucide-react";
 import { TitleIdea } from "../types";
 
@@ -14,12 +14,16 @@ interface TitlesViewProps {
   titles: TitleIdea[];
   videoSummary?: string;
   keyTopics?: string[];
+  onReroll?: () => void;
+  isRerolling?: boolean;
 }
 
 export const TitlesView: React.FC<TitlesViewProps> = ({
   titles,
   videoSummary,
   keyTopics,
+  onReroll,
+  isRerolling = false,
 }) => {
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [allCopied, setAllCopied] = useState(false);
@@ -42,27 +46,30 @@ export const TitlesView: React.FC<TitlesViewProps> = ({
     if (lower.includes("curiosité") || lower.includes("intrigue")) {
       return "bg-purple-100 text-purple-800 border-purple-200";
     }
-    if (lower.includes("bénéfice") || lower.includes("direct") || lower.includes("promesse")) {
+    if (lower.includes("bénéfice") || lower.includes("direct") || lower.includes("pratique")) {
       return "bg-emerald-100 text-emerald-800 border-emerald-200";
     }
-    if (lower.includes("question") || lower.includes("choc")) {
+    if (lower.includes("storytelling") || lower.includes("émotionnel") || lower.includes("vécu")) {
       return "bg-amber-100 text-amber-800 border-amber-200";
     }
-    if (lower.includes("révélation") || lower.includes("secret") || lower.includes("contre-intuitif")) {
+    if (lower.includes("révélation") || lower.includes("contre-intuitif") || lower.includes("choc")) {
       return "bg-rose-100 text-rose-800 border-rose-200";
     }
-    return "bg-blue-100 text-blue-800 border-blue-200";
+    if (lower.includes("court") || lower.includes("punchline") || lower.includes("réseaux")) {
+      return "bg-cyan-100 text-cyan-800 border-cyan-200";
+    }
+    return "bg-indigo-100 text-indigo-800 border-indigo-200";
   };
 
   return (
     <div className="space-y-4">
-      {/* Top summary & topics */}
+      {/* Top summary & actions toolbar */}
       <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <div className="flex items-center space-x-2">
             <Flame className="w-4 h-4 text-amber-500" />
             <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
-              {titles.length} Idées de titres percutants
+              {titles.length} Idées de titres ({titles.length} tons différents)
             </h3>
           </div>
           {videoSummary && (
@@ -72,23 +79,39 @@ export const TitlesView: React.FC<TitlesViewProps> = ({
           )}
         </div>
 
-        <button
-          type="button"
-          onClick={handleCopyAll}
-          className="self-start sm:self-auto inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-700 hover:bg-slate-100 border border-slate-200 active:scale-95 transition"
-        >
-          {allCopied ? (
-            <>
-              <Check className="w-3.5 h-3.5 mr-1 text-emerald-600" />
-              Tous copiés dans le presse-papier !
-            </>
-          ) : (
-            <>
-              <Copy className="w-3.5 h-3.5 mr-1" />
-              Copier tous les titres
-            </>
+        <div className="flex items-center gap-2 self-start sm:self-auto flex-wrap">
+          {onReroll && (
+            <button
+              type="button"
+              id="btn-reroll-titles"
+              onClick={onReroll}
+              disabled={isRerolling}
+              className="inline-flex items-center px-3.5 py-1.5 rounded-lg text-xs font-bold bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white shadow-xs active:scale-95 transition"
+              title="Générer 5 nouvelles propositions de titres sans toucher au SRT"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 mr-1.5 ${isRerolling ? "animate-spin" : ""}`} />
+              <span>{isRerolling ? "Génération..." : "Reroll les titres"}</span>
+            </button>
           )}
-        </button>
+
+          <button
+            type="button"
+            onClick={handleCopyAll}
+            className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-700 hover:bg-slate-100 border border-slate-200 active:scale-95 transition"
+          >
+            {allCopied ? (
+              <>
+                <Check className="w-3.5 h-3.5 mr-1 text-emerald-600" />
+                Tous copiés dans le presse-papier !
+              </>
+            ) : (
+              <>
+                <Copy className="w-3.5 h-3.5 mr-1" />
+                Copier tous les titres
+              </>
+            )}
+          </button>
+        </div>
       </div>
 
       {keyTopics && keyTopics.length > 0 && (
@@ -117,7 +140,7 @@ export const TitlesView: React.FC<TitlesViewProps> = ({
               <div>
                 <div className="flex items-center justify-between gap-2 mb-2">
                   <span
-                    className={`px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wide uppercase border ${getHookBadgeColor(
+                    className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wide uppercase border ${getHookBadgeColor(
                       idea.hookType
                     )}`}
                   >

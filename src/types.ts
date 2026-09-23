@@ -11,6 +11,12 @@ export interface TitleIdea {
   explanation?: string;
 }
 
+export interface FacebookDescriptionIdea {
+  tone: string;
+  text: string;
+  explanation?: string;
+}
+
 export interface CorrectionItem {
   original: string;
   corrected: string;
@@ -21,6 +27,7 @@ export interface SrtProcessResult {
   correctedSrt: string;
   titles: TitleIdea[];
   facebookDescription: string;
+  facebookDescriptions?: FacebookDescriptionIdea[];
   summary: string;
   keyTopics?: string[];
   correctionsSample?: CorrectionItem[];
